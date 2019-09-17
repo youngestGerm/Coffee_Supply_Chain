@@ -1,3 +1,5 @@
+// Remember this is inside the HTML file, this is included in scripts.
+
 App = {
     web3Provider: null,
     contracts: {},
@@ -20,11 +22,14 @@ App = {
     init: async function () {
         App.readForm();
         /// Setup access to blockchain
+        // These returns will be printed onto the console in chrome
         return await App.initWeb3();
     },
 
     readForm: function () {
+        // $("#sku").val() returns the html value inside the box #sku
         App.sku = $("#sku").val();
+        console.log($("#sku"))
         App.upc = $("#upc").val();
         App.ownerID = $("#ownerID").val();
         App.originFarmerID = $("#originFarmerID").val();
@@ -59,7 +64,8 @@ App = {
     initWeb3: async function () {
         /// Find or Inject Web3 Provider
         /// Modern dapp browsers...
-        console.log(window.ethereum);
+        
+        // window.ethereum is almost equivalent to window.web3.currentProvider
         if (window.ethereum) {
             App.web3Provider = window.ethereum;
             try {
@@ -69,11 +75,9 @@ App = {
                 // User denied account access...
                 console.error("User denied account access")
             }
-            console.log(window.ethereum, "71");
         }
         // Legacy dapp browsers...
         else if (window.web3) {
-            console.log(window.web3, "75");
             App.web3Provider = window.web3.currentProvider;
         }
         // If no injected web3 instance is detected, fall back to Ganache
@@ -109,7 +113,6 @@ App = {
         $.getJSON(jsonSupplyChain, function(data) {
             console.log('data',data, App.web3Provider, "web3Provider");
             var SupplyChainArtifact = data;
-
             
             App.contracts.SupplyChain = TruffleContract(SupplyChainArtifact);
             App.contracts.SupplyChain.setProvider(App.web3Provider);
@@ -172,15 +175,11 @@ App = {
     harvestItem: function(event) {
 
         web3 = new Web3(App.web3Provider);
-        console.log('provider: ' +window.web3.currentProvider);
         web3.version.getNetwork(function(err,res){console.log(res)});
         event.preventDefault();
-        var processId = parseInt($(event.target).data('id'));
+
         //MAJOR ERROR
-        console.log("180");
-        console.log(App.contracts.SupplyChain.deployed().then(), "deployed line 180");
         App.contracts.SupplyChain.deployed().then(function(instance) {
-           console.log("183");
 
             return instance.harvestItem(
                 App.upc, 
@@ -244,12 +243,15 @@ App = {
     },
 
     buyItem: function (event) {
+        console.log(event, "event")
         event.preventDefault();
         var processId = parseInt($(event.target).data('id'));
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             const walletValue = web3.toWei(3, "ether");
+            console.log(App.upc, App.metamaskAccountID, walletValue)
             return instance.buyItem(App.upc, {from: App.metamaskAccountID, value: walletValue});
+            
         }).then(function(result) {
             $("#ftc-item").text(result);
             console.log('buyItem',result);
@@ -352,8 +354,15 @@ App = {
     }
 };
 
-$(function () {
-    $(window).load(function () {
+// $() is equivalent to jQuery()
+// Remember that window is the browser object that contains all global JS objects, functions, and variables.
+// Note the BOM (Browser Object Model)
+$( function() {
+    $(window).load(function() {
+        console.log("Page has loaded with this script!!")
         App.init();
     });
 });
+
+ 
+

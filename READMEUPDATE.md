@@ -31,6 +31,11 @@ Makes testing faster by synchronising file changes and interactions across multi
 
 ![BrowserSync Example](https://miro.medium.com/max/1626/1*0fO_9XRhUB_kscnnbBVUcA.gif)
 
+> What is jQuery?
+
+A JS library designed to simplify HTML input and output objects. Reference it with the HTML `<script>` tag. ```<head>   <script src="jquery-3.4.1.min.js"></script>  </head>```
+
+[Download Link](https://jquery.com/download/)
 
 ## Other Information
 
