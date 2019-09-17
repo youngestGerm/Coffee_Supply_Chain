@@ -1,5 +1,6 @@
 {
   "server": {
     "baseDir": ["./","./src", "./project-6/build/contracts"]
-  }
+  },
+  "browser" : ["google chrome"]
 }
