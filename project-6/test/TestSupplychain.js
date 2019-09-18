@@ -170,8 +170,11 @@ contract('SupplyChain', function(accounts) {
 
         // Mark an item as Sold by calling function buyItem()
         console.log(consumerID, "consumerID", distributorID, "distributorID", retailerID, "RetailerID", originFarmerID, "farmerID")
+        
+        let result = await supplyChain.isDistributor(distributorID);
+        console.log(result,176)
 
-        await supplyChain.buyItem(upc, {from: distributorID, gas: 0, value: productPrice})
+        await supplyChain.buyItem(upc, {from: distributorID, value: productPrice})
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
@@ -207,6 +210,9 @@ contract('SupplyChain', function(accounts) {
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc)
         const resultBufferTwo = await supplyChain.fetchItemBufferTwo.call(upc)
+        
+
+        console.log(`one: ${resultBufferOne} two: ${resultBufferTwo}`)
 
         // Verify the result set
         assert.equal(resultBufferOne[0], sku, 'Error: Invalid item SKU')

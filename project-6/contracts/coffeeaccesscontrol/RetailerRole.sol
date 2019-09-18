@@ -16,7 +16,7 @@ contract RetailerRole {
   // In the constructor make the address that deploys this contract the 1st retailer
   constructor() public {
     require(msg.sender != address(0), "Invalid sender address!");
-    _addRetailer(msg.sender);
+    // _addRetailer(msg.sender);
   }
 
   // Define a modifier that checks to see if msg.sender has the appropriate role

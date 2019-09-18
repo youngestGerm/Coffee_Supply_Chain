@@ -18,7 +18,7 @@ contract FarmerRole {
   // In the constructor make the address that deploys this contract the 1st farmer
   constructor() public {
     require(msg.sender != address(0), "Invalid sender address!");
-    _addFarmer(msg.sender);
+    // _addFarmer(msg.sender);
   }
 
   // Define a modifier that checks to see if msg.sender has the appropriate role
@@ -33,7 +33,7 @@ contract FarmerRole {
   }
 
   // Define a function 'addFarmer' that adds this role
-  function addFarmer(address account) public onlyFarmer {
+  function addFarmer(address account) public {
     _addFarmer(account);
   }
 

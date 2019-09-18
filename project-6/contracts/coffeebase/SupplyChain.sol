@@ -151,9 +151,13 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
   // and set 'sku' to 1
   // and set 'upc' to 1
   constructor() public payable {
-    //owner = msg.sender;
+    owner = msg.sender;
     sku = 1;
     upc = 1;
+    addFarmer(msg.sender);
+    addDistributor(msg.sender);
+    addRetailer(msg.sender);
+    addConsumer(msg.sender);
   }
   // Define a function 'kill' if required
   function kill() public {
@@ -262,7 +266,7 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
 
       items[_upc].originFarmerID.transfer(items[_upc].productPrice);
       // this does not work
-      // addDistributor(0xd5f8a8039db3ad99fdcd4ed71525bbba9c8786de);
+      
 
       // emit the appropriate event
       emit Sold(_upc);
