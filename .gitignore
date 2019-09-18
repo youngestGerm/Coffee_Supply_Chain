@@ -1,1 +1,3 @@
-/project-6/build/*
+
+# Removing contract build files from git commits.
+/project-6/build/

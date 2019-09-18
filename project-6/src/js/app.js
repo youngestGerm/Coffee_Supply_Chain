@@ -201,7 +201,7 @@ App = {
         const instance = await App.contracts.SupplyChain.deployed()
         const isFarmerResult = await instance.isFarmer(App.metamaskAccountID)
         console.log(`current address is registered as a FarmerResult ${isFarmerResult}`)
-                
+
         if(!isFarmerResult) {
             const result = await instance.addFarmer(App.metamaskAccountID);
             console.log(result, "farmer result")
@@ -219,7 +219,7 @@ App = {
         );
         $("#ftc-item").text(harvestResult);
     },
-
+//Git Ignore
     processItem: async function (event) {
         event.preventDefault();
 
