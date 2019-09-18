@@ -59,6 +59,7 @@ The above error was thrown in the metamask notification display. Remember in the
 1. Hook up the HTML inputs, "Distributor ID" , "Retailer ID", etc with the contracts so that the modifiers work. 
 2. Implement a voting system where a ledger exists in the HTML page showing requests to become a certain person (distributor, etc.), add a button next to the applicant to vote for them. When the vote button is clicked, present the number of votes the person has. If they have more than 50% of all current farmer's votes, they are allowed to join. This should be the only way that an address has access to become a farmer, distributor, etc. EX: 2/4 (100%) votes would allow them to join, or 1/1 (100%). 
 3. When the product is purchased at the distributor and the purchaser, the contract should gain and lose money.
+4. Replace the default values for sku and upc in app.js init. Make sure that more than one product can be created.
 
 ### Results
 

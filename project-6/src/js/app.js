@@ -20,8 +20,10 @@ App = {
     consumerID: "0x0000000000000000000000000000000000000000",
 
     init: async function () {
-        /// Setup access to blockchain
-        // These returns will be printed onto the console in chrome
+        
+        //Replace upc and sku 
+        App.upc = 1
+        App.sku = 1
         return await App.initWeb3();
     },
 
@@ -67,9 +69,7 @@ App = {
             console.log(res[0])
             switch(res[0]) {
                 case "0x4fda79a2dd6d80f88985dd96a0ef561038354843" : console.log("Farmer"); break;
-                
                 case "0xd5f8a8039db3ad99fdcd4ed71525bbba9c8786de" : console.log("Distributor"); break;
-                
                 case "0x6686b305385adba14e74692d426010ae339a9c4c" : console.log("Consumer"); break;
                 case "0xde66e80456345ce5b8ed8c9b1a6f633050da1d6a" : console.log("Retailer"); break;
             }
@@ -89,12 +89,10 @@ App = {
             
             App.contracts.SupplyChain = TruffleContract(SupplyChainArtifact);
             App.contracts.SupplyChain.setProvider(App.web3Provider);
-            
 
             App.fetchItemBufferOne();
             App.fetchItemBufferTwo();
             App.fetchEvents();
-
         });
 
         return App.bindEvents();
@@ -114,52 +112,68 @@ App = {
 
         switch(processId) {
             case 1:
-                console.log('harvesting');
                 return await App.harvestItem(event);
                 break;
             case 2:
-                console.log('processing');
                 return await App.processItem(event);
                 break;
             case 3:
-                console.log('packing');
                 return await App.packItem(event);
                 break;
             case 4:
-                console.log('selling');
                 return await App.sellItem(event);
                 break;
             case 5:
-                console.log('buying');
                 return await App.buyItem(event);
                 break;
             case 6:
-                console.log('shipping');
                 return await App.shipItem(event);
                 break;
             case 7:
-                console.log('receiving');
                 return await App.receiveItem(event);
                 break;
             case 8:
-                console.log('purchasing');
                 return await App.purchaseItem(event);
                 break;
             case 9:
-                console.log('fetch1');
                 return await App.fetchItemBufferOne(event);
                 break;
             case 10:
-                console.log('fetch2');
                 return await App.fetchItemBufferTwo(event);
                 break;
             }
     },
+    
+    checkIfAppMetaDataIsEmpty(personType) {
+        switch (personType) {
+            case "Farmer" : 
+            // Remember MetamaskaccountID is updated
+            if (App.metamaskAccountID && App.originFarmName && App.originFarmInformation && App.productNotes) return false; else return true;
+        }
+    },
 
-    harvestItem: async function(event) {
+    setMetaDataValues(personType) {
+        switch (personType) {
+            case "Farmer" :
+                App.originFarmName = $("#originFarmName").val();
+                App.originFarmInformation = $("#originFarmInformation").val();
+                App.productNotes =  $("#productNotes").val();
+        }
+    },
 
-        web3 = new Web3(App.web3Provider);
-        web3.version.getNetwork(function(err,res){console.log(res)});
+    printMetaData() {
+        console.log(
+            App.metamaskAccountID,
+            App.originFarmName, 
+            App.originFarmInformation,
+            App.productNotes,
+            "MetaData"
+        )
+    },
+
+    harvestItem: async function (event) {
+        // Used to cancel the event if it is cancelable. In this instance it is a mouse click, this event is cancelable. 
+        // event.preventDefault just prevents the default actions from happening if the event is cancelled.
         event.preventDefault();
 
         const instance = await App.contracts.SupplyChain.deployed()
@@ -167,21 +181,21 @@ App = {
         console.log(`current address is registered as a FarmerResult ${isFarmerResult}`)
 
         if(!isFarmerResult) {
-            const result = await instance.addFarmer(App.metamaskAccountID);
-            console.log(result, "farmer result")
-
+            await instance.addFarmer(App.metamaskAccountID);
         }
 
-        const harvestResult = await instance.harvestItem(
-            App.upc, 
-            App.metamaskAccountID, 
-            App.originFarmName, 
-            App.originFarmInformation, 
-            App.originFarmLatitude, 
-            App.originFarmLongitude, 
-            App.productNotes
-        );
-        $("#ftc-item").text(harvestResult);
+        if (App.checkIfAppMetaDataIsEmpty("Farmer")) {
+            App.setMetaDataValues("Farmer");
+            const harvestResult = await instance.harvestItem( App.upc, App.metamaskAccountID, App.originFarmName, App.originFarmInformation, 100, 100, App.productNotes);
+            $("#ftc-item").text(harvestResult);
+            // App.printMetaData();
+        } else {
+            const harvestResult = await instance.harvestItem( App.upc, App.metamaskAccountID, App.originFarmName, App.originFarmInformation, 100, 100, App.productNotes);
+            console.log(harvestResult)
+            $("#ftc-item").text(harvestResult);
+        }
+        const farmerInformationRetrieval = await instance.fetchItemBufferOne(1);
+        console.log(farmerInformationRetrieval)
     },
 //Git Ignore
     processItem: async function (event) {
@@ -259,19 +273,17 @@ App = {
         $("#ftc-item").text(purchaseResult);
     },
 
-    fetchItemBufferOne: function () {
+    fetchItemBufferOne: async function () {
     ///   event.preventDefault();
     
-        App.upc = $('#upc').val();
+        App.upc = 1;
 
-        App.contracts.SupplyChain.deployed().then(function(instance) {
-          return instance.fetchItemBufferOne(App.upc);
-        }).then(function(result) {
-          $("#ftc-item").text(result);
-        //   console.log('fetchItemBufferOne', result);
-        }).catch(function(err) {
-          console.log(err.message);
-        });
+        const instance = await App.contracts.SupplyChain.deployed();
+        const itemBufferOne = await instance.fetchItemBufferOne(App.upc);
+
+        console.log(itemBufferOne, "item buffer one")
+        $("#ftc-item").text(itemBufferOne);
+
     },
 
     fetchItemBufferTwo: function () {
