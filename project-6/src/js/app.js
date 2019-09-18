@@ -20,47 +20,11 @@ App = {
     consumerID: "0x0000000000000000000000000000000000000000",
 
     init: async function () {
-        App.readForm();
         /// Setup access to blockchain
         // These returns will be printed onto the console in chrome
         return await App.initWeb3();
     },
 
-    readForm: function () {
-        // $("#sku").val() returns the html value inside the box #sku
-        App.sku = $("#sku").val();
-        console.log($("#sku").val(), "first", $("#originFarmerID").val())
-        App.upc = $("#upc").val();
-        App.ownerID = $("#ownerID").val();
-        App.originFarmerID = "0x4fda79a2dd6d80f88985dd96a0ef561038354843";
-        App.originFarmName = $("#originFarmName").val();
-        App.originFarmInformation = $("#originFarmInformation").val();
-        App.originFarmLatitude = $("#originFarmLatitude").val();
-        App.originFarmLongitude = $("#originFarmLongitude").val();
-        App.productNotes = $("#productNotes").val();
-        App.productPrice = $("#productPrice").val();
-        App.distributorID = "0xd5f8a8039db3ad99fdcd4ed71525bbba9c8786de";
-        App.retailerID = "0xde66e80456345ce5b8ed8c9b1a6f633050da1d6a";
-        App.consumerID = "0x6686b305385adba14e74692d426010ae339a9c4c";
-        
-        
-        console.log(
-            App.sku,
-            App.upc,
-            App.ownerID, 
-            App.originFarmerID, 
-            App.originFarmName, 
-            App.originFarmInformation, 
-            App.originFarmLatitude, 
-            App.originFarmLongitude, 
-            App.productNotes, 
-            App.productPrice, 
-            App.distributorID, 
-            App.retailerID, 
-            App.consumerID,
-            "readform console log"
-        );
-    },
 
     initWeb3: async function () {
         /// Find or Inject Web3 Provider
