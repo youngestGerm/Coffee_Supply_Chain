@@ -357,7 +357,10 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
       originFarmLongitude
       );
     }
-
+  
+  function getSKU() public view returns(uint) {
+    return sku;
+  }
   // Define a function 'fetchItemBufferTwo' that fetches the data
   function fetchItemBufferTwo(uint _upc) public view returns 
     (

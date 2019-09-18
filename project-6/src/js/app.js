@@ -85,7 +85,6 @@ App = {
         
         /// JSONfy the smart contracts
         $.getJSON(jsonSupplyChain, function(data) {
-            console.log('data',data, App.web3Provider, "web3Provider");
             var SupplyChainArtifact = data;
             
             App.contracts.SupplyChain = TruffleContract(SupplyChainArtifact);
@@ -155,10 +154,11 @@ App = {
 
     setMetaDataValues(personType) {
         switch (personType) {
-            case "Farmer" :
+            case "FarmerHarvest" :
                 App.originFarmName = $("#originFarmName").val();
                 App.originFarmInformation = $("#originFarmInformation").val();
                 App.productNotes =  $("#productNotes").val();
+
         }
     },
 
@@ -186,7 +186,7 @@ App = {
         }
 
         if (App.checkIfAppMetaDataIsEmpty("Farmer")) {
-            App.setMetaDataValues("Farmer");
+            App.setMetaDataValues("FarmerHarvest");
             const harvestResult = await instance.harvestItem( App.upc, App.metamaskAccountID, App.originFarmName, App.originFarmInformation, 100, 100, App.productNotes);
             $("#ftc-item").text(harvestResult);
         } else {
@@ -217,15 +217,16 @@ App = {
 
     sellItem: async function (event) {
         event.preventDefault();
-
+        
         const instance = await App.contracts.SupplyChain.deployed();
         const productPrice = web3.toWei($("#productPrice").val(), "ether");
         const sellResult = await instance.sellItem(App.upc, productPrice, {from: App.metamaskAccountID});
+        
         $("#ftc-item").text(sellResult);
     },
 
     buyItem: async function (event) {
-        event.preventDefault();
+        
 
         const walletValue = web3.toWei($("#productPrice").val(), "ether");
         const instance = await App.contracts.SupplyChain.deployed();
@@ -236,6 +237,8 @@ App = {
         if (!isDistributor) {
             await instance.addDistributor(App.metamaskAccountID);
         }
+        App.fetchItemBufferOne();
+        App.fetchItemBufferTwo();
         $("#ftc-item").text(buyResult);
     },
     //  TO-DO : This does not work, make sure to test this in test JS file
@@ -257,6 +260,8 @@ App = {
             await instance.addRetailer(App.metamaskAccountID);
         }
         const receiveResult = await instance.receiveItem(App.upc, {from: App.metamaskAccountID});
+        App.fetchItemBufferOne();
+        App.fetchItemBufferTwo();
         $("#ftc-item").text(receiveResult);
     },
 
@@ -267,19 +272,20 @@ App = {
         const isConsumer = await instance.isConsumer(App.metamaskAccountID);
         console.log(`current address is registered as a consumer ${isConsumer}`)
         if(!isConsumer) {
-            const result = await instance.addConsumer(App.metamaskAccountID)
+            await instance.addConsumer(App.metamaskAccountID)
         }
         const purchaseResult = await instance.purchaseItem(App.upc, {from: App.metamaskAccountID});
+        App.fetchItemBufferOne();
+        App.fetchItemBufferTwo();
         $("#ftc-item").text(purchaseResult);
     },
 
     fetchItemBufferOne: async function () {
-        event.preventDefault();
+        // event.preventDefault();
     
-        const instance = await App.contracts.SupplyChain.deployed();
+        const instance = await App.contracts.SupplyChain.deployed(); 
         const itemBufferOne = await instance.fetchItemBufferOne(App.upc);
 
-        console.log(itemBufferOne, "Farmer data")
         $("#ftc-item").text(itemBufferOne);
         $("#originFarmerID").val(itemBufferOne[3]);
         $("#originFarmName").val(itemBufferOne[4]);
@@ -287,18 +293,19 @@ App = {
     },
    
     fetchItemBufferTwo: async function () {
-        event.preventDefault();
+        // event.preventDefault();
         
         const instance = await App.contracts.SupplyChain.deployed();
+        const sku = await instance.getSKU();
         const itemBufferTwo = await instance.fetchItemBufferTwo(App.upc);
         
-        console.log(itemBufferTwo, "Other data");
         $("#ftc-item").text(itemBufferTwo);
         $("#productNotes").val(itemBufferTwo[3]);
-        $("#productPrice").val(itemBufferTwo[4]);
+        $("#productPrice").val(web3.fromWei(itemBufferTwo[4], "ether"));
         $("#distributorID").val(itemBufferTwo[6]);
         $("#retailerID").val(itemBufferTwo[7]);
         $("#consumerID").val(itemBufferTwo[8]);
+        console.log(`sku ${sku.toNumber()}`);
     },
 
     fetchEvents: function () {
