@@ -187,10 +187,10 @@ App = {
 
         if (App.checkIfAppMetaDataIsEmpty("Farmer")) {
             App.setMetaDataValues("FarmerHarvest");
-            const harvestResult = await instance.harvestItem( App.upc, App.metamaskAccountID, App.originFarmName, App.originFarmInformation, 100, 100, App.productNotes);
+            const harvestResult = await instance.harvestItem( $("#upc").val(), App.metamaskAccountID, App.originFarmName, App.originFarmInformation, 100, 100, App.productNotes);
             $("#ftc-item").text(harvestResult);
         } else {
-            const harvestResult = await instance.harvestItem( App.upc, App.metamaskAccountID, App.originFarmName, App.originFarmInformation, 100, 100, App.productNotes);
+            const harvestResult = await instance.harvestItem( $("#upc").val(), App.metamaskAccountID, App.originFarmName, App.originFarmInformation, 100, 100, App.productNotes);
             $("#ftc-item").text(harvestResult);
         }
         App.fetchItemBufferOne();
@@ -201,26 +201,23 @@ App = {
 //Git Ignore
     processItem: async function (event) {
         event.preventDefault();
-
         const instance = await App.contracts.SupplyChain.deployed();
-        const processResult = await instance.processItem(App.upc, {from: App.metamaskAccountID});
+        const processResult = await instance.processItem($("#upc").val(), {from: App.metamaskAccountID});
         $("#ftc-item").text(processResult);
     },
     
     packItem: async function (event) {
         event.preventDefault();
-
         const instance = await App.contracts.SupplyChain.deployed();
-        const packResult = await instance.packItem(App.upc, {from: App.metamaskAccountID});
+        const packResult = await instance.packItem($("#upc").val(), {from: App.metamaskAccountID});
         $("#ftc-item").text(packResult);
     },
 
     sellItem: async function (event) {
         event.preventDefault();
-        
         const instance = await App.contracts.SupplyChain.deployed();
         const productPrice = web3.toWei($("#productPrice").val(), "ether");
-        const sellResult = await instance.sellItem(App.upc, productPrice, {from: App.metamaskAccountID});
+        const sellResult = await instance.sellItem($("#upc").val(), productPrice, {from: App.metamaskAccountID});
         
         $("#ftc-item").text(sellResult);
     },
@@ -232,8 +229,7 @@ App = {
         const instance = await App.contracts.SupplyChain.deployed();
         const isDistributor = await instance.isDistributor(App.metamaskAccountID);
         console.log(`current address is registered as a Distributor ${isDistributor}`)
-
-        const buyResult = await instance.buyItem(App.upc, {from: App.metamaskAccountID, value: walletValue});
+        const buyResult = await instance.buyItem($("#upc").val(), {from: App.metamaskAccountID, value: walletValue});
         if (!isDistributor) {
             await instance.addDistributor(App.metamaskAccountID);
         }
@@ -244,9 +240,8 @@ App = {
     //  TO-DO : This does not work, make sure to test this in test JS file
     shipItem: async function (event) {
         event.preventDefault();
-
         const instance = await App.contracts.SupplyChain.deployed();
-        const shipResult = await instance.shipItem(App.upc, {from: App.metamaskAccountID});
+        const shipResult = await instance.shipItem($("#upc").val(), {from: App.metamaskAccountID});
         $("#ftc-item").text(shipResult);
     },
 
@@ -259,7 +254,7 @@ App = {
         if(!isRetailer) {
             await instance.addRetailer(App.metamaskAccountID);
         }
-        const receiveResult = await instance.receiveItem(App.upc, {from: App.metamaskAccountID});
+        const receiveResult = await instance.receiveItem($("#upc").val(), {from: App.metamaskAccountID});
         App.fetchItemBufferOne();
         App.fetchItemBufferTwo();
         $("#ftc-item").text(receiveResult);
@@ -274,7 +269,7 @@ App = {
         if(!isConsumer) {
             await instance.addConsumer(App.metamaskAccountID)
         }
-        const purchaseResult = await instance.purchaseItem(App.upc, {from: App.metamaskAccountID});
+        const purchaseResult = await instance.purchaseItem($("#upc").val(), {from: App.metamaskAccountID});
         App.fetchItemBufferOne();
         App.fetchItemBufferTwo();
         $("#ftc-item").text(purchaseResult);
@@ -284,7 +279,7 @@ App = {
         // event.preventDefault();
     
         const instance = await App.contracts.SupplyChain.deployed(); 
-        const itemBufferOne = await instance.fetchItemBufferOne(App.upc);
+        const itemBufferOne = await instance.fetchItemBufferOne($("#upc").val());
 
         $("#ftc-item").text(itemBufferOne);
         $("#originFarmerID").val(itemBufferOne[3]);
@@ -296,8 +291,8 @@ App = {
         // event.preventDefault();
         
         const instance = await App.contracts.SupplyChain.deployed();
-        const sku = await instance.getSKU();
-        const itemBufferTwo = await instance.fetchItemBufferTwo(App.upc);
+        const sku = await instance.getUPC();
+        const itemBufferTwo = await instance.fetchItemBufferTwo($("#upc").val());
         
         $("#ftc-item").text(itemBufferTwo);
         $("#productNotes").val(itemBufferTwo[3]);
@@ -305,7 +300,7 @@ App = {
         $("#distributorID").val(itemBufferTwo[6]);
         $("#retailerID").val(itemBufferTwo[7]);
         $("#consumerID").val(itemBufferTwo[8]);
-        console.log(`sku ${sku.toNumber()}`);
+        console.log(`upc ${sku.toNumber()}`);
     },
 
     fetchEvents: function () {

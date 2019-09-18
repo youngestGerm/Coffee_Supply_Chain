@@ -190,7 +190,7 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
       items[_upc].originFarmLongitude = _originFarmLongitude;
       items[_upc].productNotes = _productNotes;
       // Increment sku
-      sku = sku + 1;
+      upc = upc + 1;
 
       // Emit the appropriate event
       emit Harvested(_upc);
@@ -358,8 +358,9 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
       );
     }
   
-  function getSKU() public view returns(uint) {
-    return sku;
+  
+  function getUPC() public view returns(uint) {
+    return upc;
   }
   // Define a function 'fetchItemBufferTwo' that fetches the data
   function fetchItemBufferTwo(uint _upc) public view returns 
