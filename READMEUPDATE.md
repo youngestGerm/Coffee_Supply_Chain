@@ -9,6 +9,7 @@ Run these in new terminal windows both in the directory folder project 6.
 ```
 $ truffle develop 
 $ npm run dev
+$ truffle console --network rinkeby
 ```
 
 ## Running Tests
@@ -37,6 +38,12 @@ A JS library designed to simplify HTML input and output objects. Reference it wi
 
 [Download Link](https://jquery.com/download/)
 
+## Errors
+
+> ALERT: Transaction Error. Exception thrown in contract code. 
+
+The above error was thrown in the metamask notification display. Remember in the contract you had a modifier that only allowed certain addresses to do certain things. For example, only the farmer's address could harvest, process, etc. 
+
 ## Other Information
 
 ### File Usage
@@ -46,6 +53,12 @@ A JS library designed to simplify HTML input and output objects. Reference it wi
 - [BrowserSync Documentation](https://browsersync.io/docs/options#option-browser)
 
 - [Lite-Server Documentation](https://www.npmjs.com/package/lite-server)
+
+### TO-DO
+
+1. Hook up the HTML inputs, "Distributor ID" , "Retailer ID", etc with the contracts so that the modifiers work. 
+2. When the contract is created from one address (the harvestor), allow him to put in his farmer ID. Do not allow him to input the distributor ID, etc. 
+3. Make sure that the Distributor should not be able to do what the retailer is able to do.
 
 ### Packages:
 - truffle@5.0.21

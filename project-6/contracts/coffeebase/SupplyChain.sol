@@ -162,6 +162,10 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
     }
   }
 
+/**
+  The following code attempts to only allow the farmer and his address to access the 4 actions of Harvest, Process, Pack, or ForSale.
+ */
+
   // Define a function 'harvestItem' that allows a farmer to mark an item 'Harvested'
   function harvestItem(uint _upc, address _originFarmerID, 
     string memory _originFarmName, 
@@ -232,6 +236,9 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
       emit ForSale(_upc);
     }
 
+  /**
+    Notice that the address modifiers below do not are not verifying/ requiring that only the farmer call it.
+   */
   // Define a function 'buyItem' that allows the disributor to mark an item 'Sold'
   // Use the above defined modifiers to check if the item is available for sale, if the buyer has paid enough, 
   // and any excess ether sent is refunded back to the buyer
@@ -245,6 +252,7 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
     {
       
       // Update the appropriate fields - ownerID, distributorID, itemState
+      // The new owner has changed from the farmer to whoever has bought the products from the farmer, hence the current address.
       items[_upc].ownerID = msg.sender;
       items[_upc].distributorID = msg.sender;
       items[_upc].itemState = State.Sold;
