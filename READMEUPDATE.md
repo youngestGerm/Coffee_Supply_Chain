@@ -9,7 +9,7 @@ Run these in new terminal windows both in the directory folder project 6.
 ```
 $ truffle develop 
 $ npm run dev
-$ truffle console --network rinkeby
+$ truffle console --network rinkeby // This is to run the blockchain (backend) on the rinkeby network.
 ```
 
 ## Running Tests

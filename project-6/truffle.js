@@ -3,6 +3,12 @@ var mnemonic = 'figure moon return eager carpet brother swing oven stone swarm c
 
 module.exports = {
   networks: {
+    development: {
+      host: "127.0.0.1",
+      port: 9545,
+      network_id: "*", // Match any network id
+      websockets: true
+    },
     rinkeby: {
       provider: () => {
         return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/v3/e12cc82105e143dfba4e81d9b3da432b')

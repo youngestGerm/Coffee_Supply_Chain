@@ -103,8 +103,8 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
   modifier checkValue(uint _upc, Buyer _buyer) {
     _;
     uint _price = items[_upc].productPrice;
-    uint amountToReturn = msg.value - _price;
-    if (_buyer == Buyer.Consumer) { items[_upc].consumerID.transfer(amountToReturn); } else { items[_upc].distributorID.transfer(amountToReturn);}
+    // uint amountToReturn = msg.value - _price;
+    // if (_buyer == Buyer.Consumer) { items[_upc].distributorID.transfer(_price); } else { items[_upc].originFarmerID.transfer(_price);}
     
   }
   // Define a modifier that checks if an item.state of a upc is Harvested
@@ -248,7 +248,7 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
       // Call modifer to check if buyer has paid enough
         paidEnough(items[_upc].productPrice)
       // Call modifer to send any excess ether back to buyer
-        checkValue(_upc, Buyer.Distributor)
+        // checkValue(_upc, Buyer.Distributor)
     {
       
       // Update the appropriate fields - ownerID, distributorID, itemState
@@ -258,8 +258,12 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
       items[_upc].itemState = State.Sold;
 
       // Transfer money to farmer
+      // Note that this is the format of the address.transfer(amount)
+
       items[_upc].originFarmerID.transfer(items[_upc].productPrice);
-      
+      // this does not work
+      // addDistributor(0xd5f8a8039db3ad99fdcd4ed71525bbba9c8786de);
+
       // emit the appropriate event
       emit Sold(_upc);
     }
@@ -276,6 +280,7 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
       items[_upc].itemState = State.Shipped;
       items[_upc].ownerID = msg.sender;
       // Emit the appropriate event
+      
       emit Shipped(_upc);
     }
 
@@ -292,6 +297,7 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole,
       items[_upc].ownerID = msg.sender;
       items[_upc].itemState = State.Received;
       // Emit the appropriate event
+      
       emit Received(_upc);
     }
 

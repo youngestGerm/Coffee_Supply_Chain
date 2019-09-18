@@ -32,17 +32,18 @@ App = {
         console.log($("#sku").val(), "first", $("#originFarmerID").val())
         App.upc = $("#upc").val();
         App.ownerID = $("#ownerID").val();
-        App.originFarmerID = $("#originFarmerID").val();
+        App.originFarmerID = "0x4fda79a2dd6d80f88985dd96a0ef561038354843";
         App.originFarmName = $("#originFarmName").val();
         App.originFarmInformation = $("#originFarmInformation").val();
         App.originFarmLatitude = $("#originFarmLatitude").val();
         App.originFarmLongitude = $("#originFarmLongitude").val();
         App.productNotes = $("#productNotes").val();
         App.productPrice = $("#productPrice").val();
-        App.distributorID = $("#distributorID").val();
-        App.retailerID = $("#retailerID").val();
-        App.consumerID = $("#consumerID").val();
-
+        App.distributorID = "0xd5f8a8039db3ad99fdcd4ed71525bbba9c8786de";
+        App.retailerID = "0xde66e80456345ce5b8ed8c9b1a6f633050da1d6a";
+        App.consumerID = "0x6686b305385adba14e74692d426010ae339a9c4c";
+        
+        
         console.log(
             App.sku,
             App.upc,
@@ -99,7 +100,15 @@ App = {
                 console.log('Error:',err);
                 return;
             }
-            console.log('getMetaskID:',res);
+            console.log(res[0])
+            switch(res[0]) {
+                case "0x4fda79a2dd6d80f88985dd96a0ef561038354843" : console.log("Farmer"); break;
+                
+                case "0xd5f8a8039db3ad99fdcd4ed71525bbba9c8786de" : console.log("Distributor"); break;
+                
+                case "0x6686b305385adba14e74692d426010ae339a9c4c" : console.log("Consumer"); break;
+                case "0xde66e80456345ce5b8ed8c9b1a6f633050da1d6a" : console.log("Retailer"); break;
+            }
             App.metamaskAccountID = res[0];
 
         })
@@ -117,6 +126,12 @@ App = {
             App.contracts.SupplyChain = TruffleContract(SupplyChainArtifact);
             App.contracts.SupplyChain.setProvider(App.web3Provider);
             
+            App.contracts.SupplyChain.deployed().then(function(instance) { 
+                instance.addDistributor(0xd5f8a8039db3ad99fdcd4ed71525bbba9c8786de);
+                instance.addConsumer(0x6686b305385adba14e74692d426010ae339a9c4c);
+                instance.addRetailer(0xDE66E80456345cE5b8Ed8c9B1a6F633050Da1D6a);
+            })
+
             App.fetchItemBufferOne();
             App.fetchItemBufferTwo();
             App.fetchEvents();
@@ -137,37 +152,46 @@ App = {
         // console.log($(event.target).data('id'), 137);
         // $(event.target) returns the data-id of the button
         var processId = parseInt($(event.target).data('id'));
-        console.log('processId',processId);
 
         switch(processId) {
             case 1:
+                console.log('harvesting');
                 return await App.harvestItem(event);
                 break;
             case 2:
+                console.log('processing');
                 return await App.processItem(event);
                 break;
             case 3:
+                console.log('packing');
                 return await App.packItem(event);
                 break;
             case 4:
+                console.log('selling');
                 return await App.sellItem(event);
                 break;
             case 5:
+                console.log('buying');
                 return await App.buyItem(event);
                 break;
             case 6:
+                console.log('shipping');
                 return await App.shipItem(event);
                 break;
             case 7:
+                console.log('receiving');
                 return await App.receiveItem(event);
                 break;
             case 8:
+                console.log('purchasing');
                 return await App.purchaseItem(event);
                 break;
             case 9:
+                console.log('fetch1');
                 return await App.fetchItemBufferOne(event);
                 break;
             case 10:
+                console.log('fetch2');
                 return await App.fetchItemBufferTwo(event);
                 break;
             }
@@ -232,8 +256,10 @@ App = {
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             const productPrice = web3.toWei($("#productPrice").val(), "ether");
+
+
             console.log('productPrice',productPrice);
-            return instance.sellItem(App.upc, App.productPrice, {from: App.metamaskAccountID});
+            return instance.sellItem(App.upc, productPrice, {from: App.metamaskAccountID});
         }).then(function(result) {
             $("#ftc-item").text(result);
             console.log('sellItem',result);
@@ -243,12 +269,12 @@ App = {
     },
 
     buyItem: function (event) {
-        console.log(event, "event")
         event.preventDefault();
-        var processId = parseInt($(event.target).data('id'));
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             const walletValue = web3.toWei($("#productPrice").val(), "ether");
+            
+            //Remember, App.metamaskAccountID is set when you click in the browser.
             console.log(App.upc, App.metamaskAccountID, walletValue)
             return instance.buyItem(App.upc, {from: App.metamaskAccountID, value: walletValue});
             
@@ -259,7 +285,7 @@ App = {
             console.log(err.message);
         });
     },
-
+    //  TO-DO : This does not work, make sure to test this in test JS file
     shipItem: function (event) {
         event.preventDefault();
         var processId = parseInt($(event.target).data('id'));
@@ -307,13 +333,12 @@ App = {
     ///   event.preventDefault();
     ///    var processId = parseInt($(event.target).data('id'));
         App.upc = $('#upc').val();
-        console.log('upc',App.upc);
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
           return instance.fetchItemBufferOne(App.upc);
         }).then(function(result) {
           $("#ftc-item").text(result);
-          console.log('fetchItemBufferOne', result);
+        //   console.log('fetchItemBufferOne', result);
         }).catch(function(err) {
           console.log(err.message);
         });
@@ -327,7 +352,7 @@ App = {
           return instance.fetchItemBufferTwo.call(App.upc);
         }).then(function(result) {
           $("#ftc-item").text(result);
-          console.log('fetchItemBufferTwo', result);
+        //   console.log('fetchItemBufferTwo', result);
         }).catch(function(err) {
           console.log(err.message);
         });
