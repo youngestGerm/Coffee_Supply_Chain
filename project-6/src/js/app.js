@@ -200,8 +200,8 @@ App = {
 
         const instance = await App.contracts.SupplyChain.deployed()
         const isFarmerResult = await instance.isFarmer(App.metamaskAccountID)
-        console.log(isFarmerResult, "result")
-        
+        console.log(`current address is registered as a FarmerResult ${isFarmerResult}`)
+                
         if(!isFarmerResult) {
             const result = await instance.addFarmer(App.metamaskAccountID);
             console.log(result, "farmer result")
@@ -251,6 +251,8 @@ App = {
         const walletValue = web3.toWei($("#productPrice").val(), "ether");
         const instance = await App.contracts.SupplyChain.deployed();
         const isDistributor = await instance.isDistributor(App.metamaskAccountID);
+        console.log(`current address is registered as a Distributor ${isDistributor}`)
+
         const buyResult = await instance.buyItem(App.upc, {from: App.metamaskAccountID, value: walletValue});
         if (!isDistributor) {
             await instance.addDistributor(App.metamaskAccountID);
@@ -272,7 +274,7 @@ App = {
 
         const instance = await App.contracts.SupplyChain.deployed();
         const isRetailer = await instance.isRetailer(App.metamaskAccountID);
-        
+        console.log(`current address is registered as a Retailer ${isRetailer}`)
         if(!isRetailer) {
             await instance.addRetailer(App.metamaskAccountID);
         }
@@ -285,11 +287,9 @@ App = {
 
         const instance = await App.contracts.SupplyChain.deployed();
         const isConsumer = await instance.isConsumer(App.metamaskAccountID);
-
+        console.log(`current address is registered as a consumer ${isConsumer}`)
         if(!isConsumer) {
             const result = await instance.addConsumer(App.metamaskAccountID)
-            console.log(result, "consumer result")
-
         }
         const purchaseResult = await instance.purchaseItem(App.upc, {from: App.metamaskAccountID});
         $("#ftc-item").text(purchaseResult);
