@@ -2,7 +2,7 @@
 
 This repository contains an Ethereum DApp that demonstrates the supply chain between a seller and a buyer. The consumer process is similar compared to the traditional supply chain process. A seller can add items to the inventory system stored in the blockchain. A buyer can purchase such items from the inventory system. Additionally, a seller can mark an item as shipped, and similarly a buyer can mark an item as received.
 
-The DApp User Interface when running should look like...
+The DApp user interface when running should look like this:
 
 ![truffle test](images/ftc_product_overview.png)
 
